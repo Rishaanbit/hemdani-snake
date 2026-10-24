@@ -385,8 +385,9 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   }
   // Original eight-bar chiptune, synthesized locally: lead, bass, kick, and hats.
   // A short look-ahead scheduler keeps the beat independent of rendering speed.
-  const MUSIC_BPM = 112;
-  const MUSIC_STEP_SECONDS = 60 / MUSIC_BPM / 2;
+  // Classic anchors the tune at 112 BPM; tempo follows movement proportionally.
+  // Compute timing per scheduling pass so saved and paused speed changes apply.
+  const musicStepSeconds = () => (60 / 112 / 2) * MODES[mode] / MODES.classic;
   // Lower-register A minor, with a tense E dominant resolving into the loop.
   const MUSIC_MELODY = [
     [69, 0, 72, 71, 0, 69, 64, 0],
@@ -444,19 +445,20 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   function scheduleMusic() {
     if (!sound || state !== 'running' || !audio) { stopMusic(); return; }
     const now = audio.currentTime;
+    const stepSeconds = musicStepSeconds();
     if (musicNextTime < now - .15) musicNextTime = now + .025;
     while (musicNextTime < now + .12) {
       const bar = Math.floor(musicStep / 8), beat = musicStep % 8;
       const melody = MUSIC_MELODY[bar][beat];
-      if (melody) musicVoice(noteHz(melody), musicNextTime, MUSIC_STEP_SECONDS * .72, 'square', .017);
+      if (melody) musicVoice(noteHz(melody), musicNextTime, stepSeconds * .72, 'square', .017);
       if (beat % 2 === 0) {
         const bass = MUSIC_ROOTS[bar] + (beat === 4 ? 7 : 0);
-        musicVoice(noteHz(bass), musicNextTime, MUSIC_STEP_SECONDS * 1.25, 'triangle', .05);
+        musicVoice(noteHz(bass), musicNextTime, stepSeconds * 1.25, 'triangle', .05);
       }
       if (beat % 4 === 0) musicVoice(110, musicNextTime, .085, 'sine', .065, true);
       if (beat % 2 === 1) musicHat(musicNextTime);
       musicStep = (musicStep + 1) % 64;
-      musicNextTime += MUSIC_STEP_SECONDS;
+      musicNextTime += stepSeconds;
     }
   }
   function startMusic(reset = false) {
