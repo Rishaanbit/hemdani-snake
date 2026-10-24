@@ -6,10 +6,10 @@ Open `index.html` in a modern browser. The entire game, fonts, logo, music, and 
 
 - Arrows or WASD steer; two valid turns can be buffered.
 - Space pauses/resumes and starts/replays. R starts a fresh run. M toggles sound.
-- On touch devices, swipe the field or use the direction buttons.
+- On touch devices, swipe the field or use the large directional pad. Tap the pause button to pause or change speed.
 - Eat amber pixels for 10 points, grow, and avoid walls and your own body.
 - Cruise, Classic, and Overdrive use constant speeds. You can change speed while paused.
-- The playfield stays fixed at 800 × 400 pixels, on a 40 × 20 grid.
+- Desktop keeps the fixed 800 × 400 pixel, 40 × 20 grid. Phones use a responsive layout, with a 24 × 24 square grid for new portrait runs and a 40 × 20 grid for landscape runs. Rotating during a run pauses it and preserves its grid, score, and snake.
 
 ## Feedback and replay
 
